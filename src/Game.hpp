@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-#include "../engine/SpriteBuffer.hpp"
+#include "Engine/SpriteBuffer.hpp"
 // #include "../engine/SpriteAnimado.hpp"
 // #include "../engine/Cores.hpp"
 

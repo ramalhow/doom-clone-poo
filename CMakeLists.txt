@@ -7,22 +7,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Diretórios para buscar arquivos
-set(SOURCE_DIRS src Engine)
-
-# Busca recursivamente arquivos .cpp e .hpp nas pastas especificadas
-file(GLOB_RECURSE CPP_SOURCES CONFIGURE_DEPENDS
-    ${SOURCE_DIRS}/*.cpp
-)
-file(GLOB_RECURSE HPP_HEADERS CONFIGURE_DEPENDS
-    ${SOURCE_DIRS}/*.hpp
-)
-
-# Cria o executável com os arquivos .cpp (headers são incluídos automaticamente)
-add_executable(main ${CPP_SOURCES})
-
-# Flags de compilação
-target_compile_options(main PRIVATE
+# Flags comuns
+set(COMMON_COMPILE_FLAGS
     -O2
     -Wall
     -Wextra
@@ -35,11 +21,44 @@ target_compile_options(main PRIVATE
     -fsanitize=address
 )
 
-# Flags de link (necessárias para sanitizers funcionarem)
-target_link_options(main PRIVATE
+set(COMMON_LINK_FLAGS
     -fsanitize=undefined
     -fsanitize=address
 )
 
-# Opcional: inclui diretórios para facilitar inclusão de headers
-target_include_directories(main PRIVATE ${SOURCE_DIRS})
+# =============================================================================
+# ENGINE LIBRARY
+# =============================================================================
+file(GLOB_RECURSE ENGINE_SOURCES CONFIGURE_DEPENDS
+    Engine/*.cpp
+)
+
+add_library(engine STATIC ${ENGINE_SOURCES})
+
+target_compile_options(engine PRIVATE ${COMMON_COMPILE_FLAGS})
+target_link_options(engine PRIVATE ${COMMON_LINK_FLAGS})
+
+target_include_directories(engine PUBLIC Engine)
+
+# =============================================================================
+# MAIN EXECUTABLE
+# =============================================================================
+file(GLOB_RECURSE MAIN_SOURCES CONFIGURE_DEPENDS
+    src/*.cpp
+)
+
+add_executable(main ${MAIN_SOURCES})
+
+target_compile_options(main PRIVATE ${COMMON_COMPILE_FLAGS})
+target_link_options(main PRIVATE ${COMMON_LINK_FLAGS})
+
+target_include_directories(main PRIVATE src)
+
+# Linka com a engine
+target_link_libraries(main PRIVATE engine)
+
+# Diretórios de include (para includes relativos como "Engine/...")
+target_include_directories(main PRIVATE
+    ${CMAKE_SOURCE_DIR}  # permite includes como #include "Engine/..."
+    src
+)
