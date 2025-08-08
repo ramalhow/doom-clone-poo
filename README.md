@@ -4,8 +4,7 @@
 
 No terminal linux (ou pelo WSL, caso esteja no Windows) instale as seguintes dependências:
 ```
-sudo apt install build-essentials
-sudo apt install cmake
+sudo apt install build-essential cmake
 ```
 
 Por fim, execute os seguintes comandos para compilar o projeto.

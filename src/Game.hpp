@@ -1,6 +1,6 @@
 #pragma once
-#include <iostream>
-#include "Engine/SpriteBuffer.hpp"
+#include "MainMenu.hpp"
+#include "../Engine/SpriteBuffer.hpp"
 // #include "../engine/SpriteAnimado.hpp"
 // #include "../engine/Cores.hpp"
 
@@ -10,9 +10,20 @@ public:
   ~Game() {}
 
   static void run() {
-    SpriteBuffer buffer(250, 57);
-    std::cout << " world\n";
-    
+    // tela com a resolução inspirada no NES, convenção: largura x altura
+    SpriteBuffer screenBuffer(256, 240);
+
+    const auto gameConfig = MainMenu::show(screenBuffer);
+
+    while(true) {
+
+      if(gameConfig.lvlIndex == LEVELS::END_GAME) break;
+      
+      levels[lvlIndex].run(screenBuffer);
+
+      lvlIndex++;
+    }
+
 
     /*
     FaseStart
@@ -21,16 +32,16 @@ public:
     FaseFinal faseFinal("Fase1",Sprite("rsc/title1Gothic.img"));
 
     start.init();
-    start.run(buffer);
+    start.run(screenBuffer);
 
-    buffer.clear();
+    screenBuffer.clear();
     fase1.init();
-    int ret1 = fase1.run(buffer);
+    int ret1 = fase1.run(screenBuffer);
     if ( ret1 != Fase::GAME_OVER && ret1 != Fase::END_GAME){
 
-            buffer.clear();
+            screenBuffer.clear();
             faseFinal.init();
-            faseFinal.run(buffer);
+            faseFinal.run(screenBuffer);
     }
     else
             std::cout << "GAME OVER" << std::endl;
